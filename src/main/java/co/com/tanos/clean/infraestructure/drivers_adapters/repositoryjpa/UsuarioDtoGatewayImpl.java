@@ -6,8 +6,11 @@ import co.com.tanos.clean.infraestructure.mappers.MapperUsuario;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.List;
+
+
 @AllArgsConstructor
+@Repository
 public class UsuarioDtoGatewayImpl implements UsuarioGateway {
 
     private final MapperUsuario mapperUsuario;
@@ -26,8 +29,14 @@ public class UsuarioDtoGatewayImpl implements UsuarioGateway {
     }
 
     @Override
-    public Usuario bucarPorId(Long id) {
+    public Usuario buscarPorId(Long id) {
         var usuario = repository.findById(id);
         return mapperUsuario.toUsuario(usuario.get());
+    }
+
+    @Override
+    public List<Usuario> buscar() {
+        var usuario = repository.findAll();
+        return mapperUsuario.toUsuario(usuario);
     }
 }

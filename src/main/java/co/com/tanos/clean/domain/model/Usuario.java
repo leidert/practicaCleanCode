@@ -1,6 +1,5 @@
 package co.com.tanos.clean.domain.model;
 
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +13,5 @@ public class Usuario {
 
     private Long id;
     private String name;
-    private String Email;
+    private String email;
 }

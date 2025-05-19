@@ -1,7 +1,9 @@
 package co.com.tanos.clean.infraestructure.entry_points;
 
+import co.com.tanos.clean.domain.exception.UserNotFoundException;
 import co.com.tanos.clean.domain.model.Usuario;
 import co.com.tanos.clean.domain.usecase.UsuarioUsecase;
+import co.com.tanos.clean.infraestructure.shared.dtos.ApiErrorDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,21 +25,25 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> findbyid(@RequestParam("id") Long id){
+    public ResponseEntity<Usuario> findbyid(@PathVariable("id") Long id){
         var usuario = usuarioUsecase.bucarPorId(id);
-        if (usuario.equals(null)){
+        if (usuario.getId() == null){
+            return new ResponseEntity<>(usuario, HttpStatus.NOT_FOUND);
+        }else{
             return new ResponseEntity<>(usuario, HttpStatus.OK);
         }
-        return new ResponseEntity<>(usuario, HttpStatus.NOT_FOUND);
+
     }
 
     @PostMapping
     public ResponseEntity<Usuario> save(@RequestBody Usuario usuario) throws Exception {
         var resultUsuario = usuarioUsecase.guardar(usuario);
-        if (resultUsuario.equals(null)){
+        if (resultUsuario == null){
             return new ResponseEntity<>(usuario, HttpStatus.NOT_FOUND);
+        }else {
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
         }
-        return new ResponseEntity<>(usuario, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/{id}")
@@ -45,6 +51,18 @@ public class UsuarioController {
 
         usuarioUsecase.eliminar(id);
         return new ResponseEntity<>("delete ok", HttpStatus.OK);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiErrorDto> handleUserNotFoundException(UserNotFoundException e){
+
+        var detailError = new ApiErrorDto(
+                HttpStatus.NOT_FOUND.value(),
+                e.getMessage()
+        );
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(detailError);
     }
 
 }

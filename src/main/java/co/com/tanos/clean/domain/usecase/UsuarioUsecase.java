@@ -13,6 +13,7 @@ public class UsuarioUsecase {
 
     private final UsuarioGateway usuarioGateway;
 
+
     public Usuario guardar(Usuario usuario) throws Exception {
         if (usuario == null){
             throw new Exception();
